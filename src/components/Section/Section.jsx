@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import styles from './Section.module.css';
 
-function Section({ title, children }) {
+export default function Section({ title, children }) {
   return (
     <div className={styles.sectionContainer}>
       <h2 className={styles.title}>{title}</h2>
@@ -15,4 +15,3 @@ Section.propTypes = {
   children: PropTypes.node,
 };
 
-export default Section;

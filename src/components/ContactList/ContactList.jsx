@@ -2,15 +2,18 @@ import PropTypes from 'prop-types';
 import IconButton from '../IconButton';
 import { connect } from 'react-redux';
 import * as phonebookOperations from '../../redux/phonebook-operations';
-import { getVisibleContacts } from '../../redux/phonebook-selectors';
+import * as phonebookSelectors from '../../redux/phonebook-selectors';
 import { ReactComponent as DeleteIcon } from '../../icons/delete.svg';
 import styles from './ContactList.module.css';
 
-const ContactList = ({ contacts, onDeleteContact }) => {
-  return (
-    <ul className={styles.list}>
+
+
+
+
+const ContactList = ({ contacts, onDeleteContact }) => (
+  <ul className={styles.list}>
       {contacts.map(({ id, name, number }) => (
-        <li key={number.toString()} value={number} className={styles.item}>
+        <li key={id} value={number} className={styles.item}>
           <p className={styles.text}>
             {name}: {number}
           </p>
@@ -23,8 +26,8 @@ const ContactList = ({ contacts, onDeleteContact }) => {
         </li>
       ))}
     </ul>
-  );
-}
+);
+
 
 ContactList.propTypes = {
   contacts: PropTypes.arrayOf(
@@ -40,11 +43,11 @@ ContactList.propTypes = {
 
 
 const mapStateToProps = state => ({
-   contacts: getVisibleContacts(state),
+  contacts: phonebookSelectors.getVisibleContacts(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-   onDeleteContact: id => dispatch(phonebookOperations.deleteContact(id)),
+  onDeleteContact: id => dispatch(phonebookOperations.deleteContact(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactList);

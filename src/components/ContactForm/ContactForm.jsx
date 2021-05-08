@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getContacts } from '../../redux/phonebook-selectors';
 import * as phonebookOperations from '../../redux/phonebook-operations';
+import * as phonebookSelectors from '../../redux/phonebook-selectors';
 import styles from './ContactForm.module.css';
 
 class ContactForm extends Component {
@@ -10,44 +10,30 @@ class ContactForm extends Component {
     number: '',
   };
 
+  handleSubmit = e => {
+    e.preventDefault();
+    if (this.props.contacts.some(name => name.name === this.state.name))
+      return alert(`${this.state.name} is already in your contacts`);
+    this.props.onSubmit(this.state);
+
+    this.reset();
+  };
+
   handleChange = e => {
     const { name, value } = e.currentTarget;
 
     this.setState({ [name]: value });
   };
 
-  contactValidation = () => {
-    const { name, number } = this.state;
-    const { contacts } = this.props;
-
-    if (contacts.find(contact => name === contact.name)) {
-      alert(`${name} is already in contacts`);
-      return true;
-    }
-
-    if (name === '' || number === '') {
-      alert('Please enter contact information');
-      return true;
-    }
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const { name, number } = this.state;
-
-    if (this.contactValidation()) {
-      return;
-    }
-
-    this.props.onSubmit(name, number);
-    this.reset();
-  };
-
   reset = () => {
     this.setState({ name: '', number: '' });
   };
 
+
   render() {
+
+    const { name, number } = this.state;
+
     return (
       <form onSubmit={this.handleSubmit} className={styles.form}>
         <label className={styles.formItem}>
@@ -55,7 +41,7 @@ class ContactForm extends Component {
           <input
             type="text"
             name="name"
-            value={this.state.name}
+            value={name}
             placeholder="Сontact name"
             onChange={this.handleChange}
             className={styles.input}
@@ -67,7 +53,7 @@ class ContactForm extends Component {
           <input
             type="tel"
             name="number"
-            value={this.state.number}
+            value={number}
             placeholder="Сontact number"
             onChange={this.handleChange}
             className={styles.input}
@@ -82,12 +68,11 @@ class ContactForm extends Component {
 }
 
 const mapStateToProps = state => ({
-  contacts: getContacts(state),
+  contacts: phonebookSelectors.getVisibleContacts(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSubmit: (name, number) =>
-     dispatch(phonebookOperations.addContact(name, number)),
+  onSubmit: text => dispatch(phonebookOperations.addContact(text)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);

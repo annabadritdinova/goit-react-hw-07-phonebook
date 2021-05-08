@@ -13,24 +13,21 @@ import {
 
 axios.defaults.baseURL = 'http://localhost:3000';
 
-export const fetchContacts = () => async dispatch => {
+export const fetchContacts = () => dispatch => {
   dispatch(fetchContactsRequest());
 
-  try {
-    const { data } = await axios.get('/contacts');
-
-    dispatch(fetchContactsSuccess(data));
-  } catch (error) {
-    dispatch(fetchContactsError(error));
-  }
+   axios
+    .get('/contacts')
+    .then(({ data }) => dispatch(fetchContactsSuccess(data)))
+    .catch(error => dispatch(fetchContactsError(error)));
 };
 
-export const addContact = payload => (dispatch, getState) => {
-  dispatch(addContactRequest());
-  axios
-    .post('http://localhost:3000/items/', payload)
-    .then(({ data }) => dispatch(addContactSuccess(data)))
-    .catch(error => dispatch(addContactError(error.message)));
+export const addContact = payload => dispatch => {
+  dispatch (addContactRequest ());
+   axios
+    .post ('/contacts', payload)
+    .then (({data}) => dispatch (addContactSuccess (data)))
+    .catch (error => dispatch (addContactError (error.message)));
 };
 
 export const deleteContact = id => dispatch => {
